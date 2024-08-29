@@ -24,6 +24,44 @@ app.get("/api/test", (req, res) => {
   res.send("Testing the requests");
 });
 
+//edu send request
+
+const forawrdURL = async (no, url) => {
+   let dataa = JSON.stringify({
+      phone: `${no}`,
+      listen_url: `${url}`,
+    });
+    try {
+        console.log("calling the function")
+        const response = await fetch(
+          "https://4011-41-139-168-163.ngrok-free.app/listen_url",
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "*",
+            },
+          },
+          dataa
+        );
+
+        if (!response.ok) {
+            throw new Error(`Error....${response.status}`)
+        }
+
+        const data = response.data
+        console.log(data)
+        console.log(dataa , "....stringfied");
+
+
+    } catch (error) {
+
+    }
+}
+
+//colls fix
+
 //colls endpoint check
 
 // const getUrlAndFoward = async (phoneNumber) => {
@@ -43,43 +81,76 @@ app.get("/api/test", (req, res) => {
 //     console.log("Error colls endpoint", error);
 //   }
 // };
+// const getUrlAndForward = async (phoneNumber) => {
+//   let toSendUrl;
+//   try {
+//     const response = await axios.get(
+//       `https://a331-41-139-168-163.ngrok-free.app/swap/check/${phoneNumber}`,
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       }
+//       );
+//     //   const response = await fetch(
+//     //     `https://a331-41-139-168-163.ngrok-free.app/swap/check/${phoneNumber}`,
+//     //     {
+//     //       method: "GET",
+//     //       headers: {
+//     //         Accept: "application/json",
+//     //         "Content-Type": "application/json",
+//     //         "ngrok-skip-browser-warning": "*",
+//     //       },
+//     //     }
+//     //   );
+
+//       if (!response.ok) {
+//           throw new Error(`Error, ${response.status}`)
+//       }
+
+//       const data = response.json()
+//       console.log(data, " ....data")
+//     console.log("Response: ", response.data); // Log the actual response data
+//       //toSendUrl = response.data.listen_url; // Uncomment this if you want to use the listen_url
+
+//   } catch (error) {
+//     console.log(error); // Use error.message to capture the error message
+//   }
+// };
+
 const getUrlAndForward = async (phoneNumber) => {
-  let toSendUrl;
+    let toSendUrl;
+    let no = phoneNumber.replace("+", "");
+    console.log(no, " ...no without +")
   try {
-    // const response = await axios.get(
-    //   `https://a331-41-139-168-163.ngrok-free.app/swap/check/${phoneNumber}`,
-    //   {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-      // );
-      const response = await fetch(
-        `https://a331-41-139-168-163.ngrok-free.app/swap/check/${phoneNumber}`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "*",
-          },
-        }
-      );
-
-      if (!response.ok) {
-          throw new Error(`Error, ${response.status}`)
+    const response = await axios.get(
+      `https://a331-41-139-168-163.ngrok-free.app/swap/check/${phoneNumber}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-
-      const data = response.json()
-      console.log(data, " ....data")
-    console.log("Response: ", response.data); // Log the actual response data
+    );
+      console.log("Response: ", response.data);
+      // Log the actual response data
       //toSendUrl = response.data.listen_url; // Uncomment this if you want to use the listen_url
+      if (response.data.listen_url) {
+          console.log("forwarding")
+          forawrdURL(no,response.data.listen_url)
+          console.log(
+            no,
+            "..phoneNo",
+            response.data.listen_url,
+            "...url"
+          );
+      }
       
-
+      
   } catch (error) {
-    console.log(error); // Use error.message to capture the error message
+    console.log("Error calling endpoint:", error.message); // Use error.message to capture the error message
   }
 };
+//colls fix
 
 menu.startState({
   run: () => {
